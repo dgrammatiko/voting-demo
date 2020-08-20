@@ -1,5 +1,5 @@
-import querystring from "querystring";
-import fetch from "node-fetch";
+const querystring = require("querystring");
+const fetch = require("node-fetch");
 
 const API_ENDPOINT = "https://icanhazdadjoke.com/";
 
