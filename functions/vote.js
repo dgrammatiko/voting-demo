@@ -1,57 +1,44 @@
-const faunadb = require('faunadb');
+const admin = require("firebase-admin");
 
 exports.handler = async (event, context) => {
-    // Only allow POST
-    if (event.httpMethod !== "POST" || !event.body) {
-        return { statusCode: 405, body: "Method Not Allowed" };
-    }
+  // Only allow POST
+  if (event.httpMethod !== "POST" || !event.body) {
+    return { statusCode: 405, body: "Method Not Allowed" };
+  }
 
-    // Make sure we have the needed env variables
-    if (!process.env.FAUNADB_SECRET) {
-        return { statusCode: 405, body: "Misconfigured Server" };
-    }
+  // Make sure we have the needed env variables
+  if (!process.env.FIREBASE_SECRET) {
+    return { statusCode: 405, body: "Misconfigured Server" };
+  }
 
-    const params = JSON.parse(event.body);
-    let url = params.url || false;
-    const userIp = params.userIp || false;
-    const value = params.value || false;
+  const params = JSON.parse(event.body);
+  let url = params.url || false;
+  const userIp = params.userIp || false;
+  const value = params.value || false;
 
-    if (!url || !userIp || !value) {
-        return { statusCode: 405, body: "Missing arguments" };
-    }
+  if (!url || !userIp || !value) {
+    return { statusCode: 405, body: "Missing arguments" };
+  }
 
-    url = new URL(url);
-    url = url.pathname.replace(/\//g, '-');
+  url = (Buffer.from(url)).toString('base64');
 
-    if (url === '-') {
-        url = 'home';
-    }
+  // Initialize the app with a service account, granting admin privileges
+  admin.initializeApp({
+    credential: admin.credential.cert(process.env.firebase_admin),
+    databaseURL: process.env.databaseURL,
+  });
 
-    const q = faunadb.query;
-    const client = new faunadb.Client({
-        secret: process.env.FAUNADB_SECRET
-    });
+  const db = admin.firestore();
+  const cityRef = db.collection(process.env.collection).doc(url);
+  const doc = await cityRef.get();
+  if (!doc.exists) {
+    return { statusCode: 500, body: "No data" };
+  } else {
+    return { statusCode: 200, body: JSON.stringify(doc.data()) };
+  }
 
-    let data;
-    try {
-        data = await client.query(
-            q.Map(
-                q.Paginate(Documents(Collection('home'))),
-                q.Lambda(x => q.Get(x))
-            ));
-    } catch (e) {
-        return { statusCode: 500, body: "Misconfigured DB" };
-    }
-
-    if (!data) {
-        return { statusCode: 500, body: "No data" };
-    } else {
-        // return { statusCode: 200, body: JSON.stringify(data) };
-    }
-
-
-    return {
-        statusCode: 200,
-        body: `Hello, url: ${url} , userIp: ${userIp} , value: ${value}`
-    };
+  return {
+    statusCode: 200,
+    body: `Hello, url: ${url} , userIp: ${userIp} , value: ${value}`
+  };
 };
