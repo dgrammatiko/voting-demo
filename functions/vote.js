@@ -6,11 +6,6 @@ exports.handler = async (event, context) => {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  // Make sure we have the needed env variables
-  if (!process.env.FIREBASE_SECRET) {
-    return { statusCode: 405, body: "Misconfigured Server" };
-  }
-
   const params = JSON.parse(event.body);
   let url = params.url || false;
   const userIp = params.userIp || false;
