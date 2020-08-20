@@ -45,19 +45,20 @@ exports.handler = async (event, context) => {
     data = doc.data();
     if (!data.ratings) {
       data.ratings = emptyData;
-      data.ratings[value].push(userIp)
-    } else {
-      let exists = false;
-      for (const rating in data.ratings) {
-        if (rating.includes(userIp)) {
-          exists = true;
-        }
-      }
+    }
 
-      if (exists) {
-        return { statusCode: 200, body: 'You have already voted!' };
+    let alreadyVoted = false;
+    for (const rating of data.ratings) {
+      if (rating.includes(userIp)) {
+        alreadyVoted = true;
       }
     }
+
+    if (alreadyVoted) {
+      return { statusCode: 200, body: 'You have already voted!' };
+    }
+
+    data.ratings[value].push(userIp);
 
     const res = await db.collection(process.env.collection).doc(url).set(data);
     console.log(JSON.stringify(res))
