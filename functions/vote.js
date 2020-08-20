@@ -35,10 +35,14 @@ exports.handler = async (event, context) => {
   const db = admin.firestore();
   const cityRef = db.collection(process.env.collection).doc(url);
   const doc = await cityRef.get();
+  let data;
+
+  console.log(JSON.stringify(doc.data()))
   if (!doc.exists) {
-    return { statusCode: 500, body: "No data" };
+    data.ratings = emptyData;
+    data.ratings[value].push(userIp)
   } else {
-    const data = doc.data();
+    data = doc.data();
     if (!data.ratings) {
       data.ratings = emptyData;
       data.ratings[value].push(userIp)
