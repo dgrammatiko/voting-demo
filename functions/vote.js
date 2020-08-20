@@ -57,7 +57,7 @@ exports.handler = async (event, context) => {
     }
 
     if (alreadyVoted) {
-      return { statusCode: 200, body: 'You have already voted!' };
+      return { statusCode: 200, body: JSON.stringify('You have already voted!') };
     }
 
     data.ratings[value].push(userIp);
@@ -66,7 +66,7 @@ exports.handler = async (event, context) => {
     console.log(JSON.stringify(res))
     return {
       statusCode: 200,
-      body: `Hello, url: ${url} , userIp: ${userIp} , value: ${value}`
+      body: JSON.stringify('Thank you! 🎉')
     };
   }
 };
