@@ -21,7 +21,11 @@ exports.handler = async (event, context) => {
     }
 
     url = new URL(url);
-    url = url.pathname.replace(/\//g, '_')
+    url = url.pathname.replace(/\//g, '-');
+
+    if (url === '-') {
+        url = 'home';
+    }
 
     const q = faunadb.query;
     const client = new faunadb.Client({
@@ -42,7 +46,7 @@ exports.handler = async (event, context) => {
     if (!data) {
         return { statusCode: 500, body: "No data" };
     } else {
-        return { statusCode: 200, body: JSON.stringify(data) };
+        // return { statusCode: 200, body: JSON.stringify(data) };
     }
 
 
