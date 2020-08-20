@@ -48,7 +48,7 @@ exports.handler = async (event, context) => {
     }
 
     let alreadyVoted = false;
-    for (const [key, value] of Object.entries(dta.ratings)) {
+    for (const [key, value] of Object.entries(data.ratings)) {
       if (value.includes(userIp)) {
         alreadyVoted = true;
       }
