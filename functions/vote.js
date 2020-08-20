@@ -1,9 +1,12 @@
-const admin = require("firebase-admin");
+const firebase = require("firebase-admin");
+
+const appName = `a_${(new Date()).getTime()}`;
+
 // Initialize the app with a service account, granting admin privileges
-admin.initializeApp({
-  credential: admin.credential.cert(JSON.parse(process.env.firebase_admin)),
+global[appName] = firebase.initializeApp({
+  credential: firebase.credential.cert(JSON.parse(process.env.firebase_admin)),
   databaseURL: process.env.databaseURL,
-}, `a_${(new Date()).getTime()}`);
+}, appName);
 
 exports.handler = async (event, context) => {
   // Only allow POST
@@ -31,9 +34,9 @@ exports.handler = async (event, context) => {
     5: []
   };
 
-  const db = admin.firestore();
-  const cityRef = db.collection(process.env.collection).doc(url);
-  const doc = await cityRef.get();
+  const db = global[appName].firestore();
+  const docRef = db.collection(process.env.collection).doc(url);
+  const doc = await docRef.get();
   let data;
 
   console.log(JSON.stringify(doc.data()))
@@ -59,7 +62,7 @@ exports.handler = async (event, context) => {
 
     data.ratings[value].push(userIp);
 
-    const res = await db.collection(process.env.collection).doc(url).set(data);
+    await docRef.set(data);
     console.log(JSON.stringify(res))
     return {
       statusCode: 200,
