@@ -1,4 +1,9 @@
 const admin = require("firebase-admin");
+// Initialize the app with a service account, granting admin privileges
+admin.initializeApp({
+  credential: admin.credential.cert(JSON.parse(process.env.firebase_admin)),
+  databaseURL: process.env.databaseURL,
+}, `a_${(new Date()).getTime()}`);
 
 exports.handler = async (event, context) => {
   // Only allow POST
@@ -25,12 +30,6 @@ exports.handler = async (event, context) => {
     4: [],
     5: []
   };
-
-  // Initialize the app with a service account, granting admin privileges
-  admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(process.env.firebase_admin)),
-    databaseURL: process.env.databaseURL,
-  });
 
   const db = admin.firestore();
   const cityRef = db.collection(process.env.collection).doc(url);
