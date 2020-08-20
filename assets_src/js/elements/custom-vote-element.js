@@ -64,7 +64,7 @@ class VoteElement extends HTMLElement {
 
   async submit(event) {
     event.preventDefault();
-    event.currentTarget.setAttribute('disabled')
+    event.currentTarget.setAttribute('disabled', '')
     if (!this.url) return;
     this.initialValue = this.value;
     const form = event.currentTarget.form;
