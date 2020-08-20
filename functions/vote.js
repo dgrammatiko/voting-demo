@@ -12,13 +12,16 @@ exports.handler = async (event, context) => {
     }
 
     const params = JSON.parse(event.body);
-    const url = params.url || false;
+    let url = params.url || false;
     const userIp = params.userIp || false;
     const value = params.value || false;
 
     if (!url || !userIp || !value) {
         return { statusCode: 405, body: "Missing arguments" };
     }
+
+    url = new URL(url);
+    url = url.pathname.replace(/\//g, '_')
 
     const q = faunadb.query;
     const client = new faunadb.Client({
