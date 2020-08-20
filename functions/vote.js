@@ -17,6 +17,15 @@ exports.handler = async (event, context) => {
 
   url = (Buffer.from(url)).toString('base64');
 
+  const emptyData = {
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: []
+  };
+
   // Initialize the app with a service account, granting admin privileges
   admin.initializeApp({
     credential: admin.credential.cert(JSON.parse(process.env.firebase_admin)),
@@ -29,11 +38,28 @@ exports.handler = async (event, context) => {
   if (!doc.exists) {
     return { statusCode: 500, body: "No data" };
   } else {
-    return { statusCode: 200, body: JSON.stringify(doc.data()) };
-  }
+    const data = doc.data();
+    if (!data.ratings) {
+      data.ratings = emptyData;
+      data.ratings[value].push(userIp)
+    } else {
+      let exists = false;
+      for (const rating in data.ratings) {
+        if (rating.includes(userIp)) {
+          exists = true;
+        }
+      }
 
-  return {
-    statusCode: 200,
-    body: `Hello, url: ${url} , userIp: ${userIp} , value: ${value}`
-  };
+      if (exists) {
+        return { statusCode: 200, body: 'You have already voted!' };
+      }
+    }
+
+    const res = await db.collection(process.env.collection).doc(url).set(data);
+    console.log(JSON.stringify(res))
+    return {
+      statusCode: 200,
+      body: `Hello, url: ${url} , userIp: ${userIp} , value: ${value}`
+    };
+  }
 };
