@@ -40,6 +40,6 @@ exports.handler = async (event, context) => {
 
     return {
         statusCode: 200,
-        body: `Hello, url: ${url} , userIp: ${userIp} , value: ${values}`
+        body: `Hello, url: ${url} , userIp: ${userIp} , value: ${value}`
     };
 };
