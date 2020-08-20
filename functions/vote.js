@@ -19,7 +19,7 @@ exports.handler = async (event, context) => {
 
   // Initialize the app with a service account, granting admin privileges
   admin.initializeApp({
-    credential: admin.credential.cert(process.env.firebase_admin),
+    credential: admin.credential.cert(JSON.parse(process.env.firebase_admin)),
     databaseURL: process.env.databaseURL,
   });
 
