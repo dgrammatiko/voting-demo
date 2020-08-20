@@ -36,7 +36,7 @@ exports.handler = async (event, context) => {
     try {
         data = await client.query(
             q.Map(
-                q.Paginate(Documents(Collection(url))),
+                q.Paginate(Documents(Collection('home'))),
                 q.Lambda(x => q.Get(x))
             ));
     } catch (e) {
