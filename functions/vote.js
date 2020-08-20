@@ -39,7 +39,6 @@ exports.handler = async (event, context) => {
   const doc = await docRef.get();
   let data;
 
-  console.log(JSON.stringify(doc.data()))
   if (!doc.exists) {
     data.ratings = emptyData;
     data.ratings[value].push(userIp)
@@ -63,7 +62,7 @@ exports.handler = async (event, context) => {
     data.ratings[value].push(userIp);
 
     await docRef.set(data);
-    console.log(JSON.stringify(res))
+
     return {
       statusCode: 200,
       body: JSON.stringify('Thank you! 🎉')
