@@ -1,9 +1,4 @@
 const faunadb = require('faunadb');
-const q = faunadb.query;
-
-const client = new faunadb.Client({
-    secret: process.env.FAUNADB_SECRET
-});
 
 exports.handler = async (event, context) => {
     // Only allow POST
@@ -12,7 +7,7 @@ exports.handler = async (event, context) => {
     }
 
     // Make sure we have the needed env variables
-    if (!FaunaKey || !FaunaUrl) {
+    if (!process.env.FAUNADB_SECRET) {
         return { statusCode: 405, body: "Misconfigured Server" };
     }
 
@@ -24,6 +19,11 @@ exports.handler = async (event, context) => {
     if (!url || !userIp || !value) {
         return { statusCode: 405, body: "Missing arguments" };
     }
+
+    const q = faunadb.query;
+    const client = new faunadb.Client({
+        secret: process.env.FAUNADB_SECRET
+    });
 
     let data;
     try {
