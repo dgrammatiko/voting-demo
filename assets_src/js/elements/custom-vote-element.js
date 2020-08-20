@@ -67,7 +67,7 @@ class VoteElement extends HTMLElement {
     if (!this.url) return;
     this.initialValue = this.value;
     const form = event.currentTarget.form;
-    const response = await fetch(url, {
+    const response = await fetch(this.url, {
       method: 'POST',
       mode: 'cors', // no-cors, *cors, same-origin
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
