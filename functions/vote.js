@@ -30,7 +30,11 @@ exports.handler = async (event, context) => {
 
     let data;
     try {
-        data = await client.query(q.Paginate(q.Match(q.Ref(`demo/${url}`))));
+        data = await client.query(
+            q.Map(
+                q.Paginate(Documents(Collection(url))),
+                q.Lambda(x => q.Get(x))
+            ));
     } catch (e) {
         return { statusCode: 500, body: "Misconfigured DB" };
     }
